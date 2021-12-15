@@ -1,3 +1,4 @@
+#tiek importetas biblotekas, logosnas, prieks api,  utt.
 import logging
 import logging.config
 import requests
@@ -8,7 +9,7 @@ import yaml
 
 from datetime import datetime
 from configparser import ConfigParser
-
+#sis bloks atbild par logosonau jeb zuranlesanu  strada ar arejo config failu
   # Loading logging configuration
 with open('./log_worker.yaml', 'r') as stream:
      log_config = yaml.safe_load(stream)
@@ -25,6 +26,7 @@ logger = logging.getLogger('root')
 
 # Initiating and reading config values
 logger.info('Loading configuration from file')
+#sis bloks griezas pie areja config faila un nolasa vertibas no tā
 try:
                 config = ConfigParser()
                 config.read('config.ini')
@@ -39,29 +41,30 @@ logger.info('DONE')
 #
 
 # Getting todays date
+#Dabūjam sodienas datumu lai varetu iaveidot korektu pierasiju pret nasa serveri
 dt = datetime.now()
 request_date = str(dt.year) + "-" + str(dt.month).zfill(2) + "-" + str(dt.day).zfill(2)  
 logger.debug("Generated today's date: " + str(request_date))
 
-
+#sini bloka aprakstitis ka tiek veikts pats pieprasijums un  padod lidzi  parametrus ka piem atslega un datums
 logger.debug("Request url: " + str(nasa_api_url + "rest/v1/feed?start_date=" + request_date + "&end_date=" + request_date + "&api_key=" + nasa_api_key))
 r = requests.get(nasa_api_url + "rest/v1/feed?start_date=" + request_date + "&end_date=" + request_date + "&api_key=" + nasa_api_key)
 
 logger.debug("Response status code: " + str(r.status_code))
 logger.debug("Response headers: " + str(r.headers))
 logger.debug("Response content: " + str(r.text))
-
+#ja atgriez 200 kas ir veiksmiga  http pierpasjuma kods
 if r.status_code == 200:
-
+#parsejam datus no json formatu uz diviem masiviem par drosajiem un bistamajiem asteroidiem
 	json_data = json.loads(r.text)
 
 	ast_safe = []
 	ast_hazardous = []
-
+#parbaude vai tads elemts eksiste  padotajos datus
 	if 'element_count' in json_data:
 		ast_count = int(json_data['element_count'])
 		logger.info("Asteroid count today: " + str(ast_count))
-
+#ja ir vairak par nulli ejam talak un  nolasam datus no nasa iedotajiem datiem.( vards,url uz NASA lapu, MIN MAX izmeris, laiku kad pietuvosies
 		if ast_count > 0:
 			for val in json_data['near_earth_objects'][request_date]:
 				if 'name' and 'nasa_jpl_url' and 'estimated_diameter' and 'is_potentially_hazardous_asteroid' and 'close_approach_data' in val:
@@ -111,20 +114,20 @@ if r.status_code == 200:
 					logger.info("Asteroid name: " + str(tmp_ast_name) + " | INFO: " + str(tmp_ast_nasa_jpl_url) + " | Diameter: " + str(tmp_ast_diam_min) + " - " + str(tmp_ast_diam_max) + " km | Hazardous: " + str(tmp_ast_hazardous))
 					logger.info("Close approach TS: " + str(tmp_ast_close_appr_ts) + " | Date/time UTC TZ: " + str(tmp_ast_close_appr_dt_utc) + " | Local TZ: " + str(tmp_ast_close_appr_dt))
 					logger.info("Speed: " + str(tmp_ast_speed) + " km/h" + " | MISS distance: " + str(tmp_ast_miss_dist) + " km")
-					
+					#ja pec augstak minetajime pararmetriem atbilst tad ieliekam attiecigaja saraksta
 					# Adding asteroid data to the corresponding array
 					if tmp_ast_hazardous == True:
 						ast_hazardous.append([tmp_ast_name, tmp_ast_nasa_jpl_url, tmp_ast_diam_min, tmp_ast_diam_max, tmp_ast_close_appr_ts, tmp_ast_close_appr_dt_utc, tmp_ast_close_appr_dt, tmp_ast_speed, tmp_ast_miss_dist])
 					else:
 						ast_safe.append([tmp_ast_name, tmp_ast_nasa_jpl_url, tmp_ast_diam_min, tmp_ast_diam_max, tmp_ast_close_appr_ts, tmp_ast_close_appr_dt_utc, tmp_ast_close_appr_dt, tmp_ast_speed, tmp_ast_miss_dist])
-
+#ja nav neviena tad iegustam sadu rezultatu ka neka sodien nebus
 		else:
 			logger.info("No asteroids are going to hit earth today")
 
 	logger.info("Hazardous asteorids: " + str(len(ast_hazardous)) + " | Safe asteroids: " + str(len(ast_safe)))
 
 	if len(ast_hazardous) > 0:
-
+#sakarto pec sarakststa, kuri  var ietriekties, kuri palidos garam vai ka nav vispar
 		ast_hazardous.sort(key = lambda x: x[4], reverse=False)
 
 		logger.info("Today's possible apocalypse (asteroid impact on earth) times:")
@@ -135,6 +138,6 @@ if r.status_code == 200:
 		logger.info("Closest passing distance is for: " + str(ast_hazardous[0][0]) + " at: " + str(int(ast_hazardous[0][8])) + " km | more info: " + str(ast_hazardous[0][1]))
 	else:
 		logger.info("No asteroids close passing earth today")
-
+#ja ir kada kluda nolasot no API izdot kludas pazinojumu
 else:
 	logger.error("Unable to get response from API. Response code: " + str(r.status_code) + " | content: " + str(r.text))
