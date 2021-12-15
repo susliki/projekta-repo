@@ -166,7 +166,7 @@
 
          ast_safe = []
           ast_hazardous = []
-    #parbaude vai tads elemts eksiste  padotajos datus
+    #parbaude vai tads elemts eksiste  padotajos datus 
          if 'element_count' in json_data:
             ast_count = int(json_data['element_count'])
            logger.info("Asteroid count today: " + str(ast_count))
