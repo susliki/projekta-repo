@@ -147,8 +147,8 @@ if __name__ == "__main__":
   init_db()
 
 # Getting todays date
-#Dabūjam sodienas datumu lai varetu iaveidot korektu pierasiju pret nasa serveri
-    dt = datetime.now()
+#Dabūjam sodienas datumu lai varetu iaveidot korektu pierasiju pret nasa server
+	dt = datetime.now()
     request_date = str(dt.year) + "-" + str(dt.month).zfill(2) + "-" + str(dt.day).zfill(2)  
     logger.debug("Generated today's date: " + str(request_date))
 
