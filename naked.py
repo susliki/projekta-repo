@@ -15,16 +15,14 @@ from mysql.connector import Error
 
 #sis bloks atbild par logosonau jeb zuranlesanu  strada ar arejo config failu
   # Loading logging configuration
-  with open('./log_worker.yaml', 'r') as stream:
+with open('./log_worker.yaml', 'r') as stream:
    log_config = yaml.safe_load(stream)
 
    logging.config.dictConfig(log_config)
 
         # Creating logger
-        logger = logging.getLogger('root')
-
-
-        ('Asteroid processing service')
+	logger = logging.getLogger('root')
+	('Asteroid processing service')
 
 
 
@@ -40,7 +38,7 @@ logger.info('Loading configuration from file')
    logging.config.dictConfig(log_config)
 
         # Creating logger
-        logger = logging.getLogger('root')
+	logger = logging.getLogger('root')
 
         ('Asteroid processing service')
 
@@ -247,3 +245,5 @@ else:
   #ja ir kada kluda nolasot no API izdot kludas pazinojumu
 else:
   logger.error("Unable to get response from API. Response code: " + str(r.status_code) + " | content: " + str(r.text))
+
+
