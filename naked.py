@@ -141,45 +141,45 @@ def sort_ast_by_time(ast_arr):
 if __name__ == "__main__":
 
 
-  connection = None
-        connected = False
+	connection = None
+	connected = False
 
-        init_db()
+	init_db()
 
 # Getting todays date
 #Dabūjam sodienas datumu lai varetu iaveidot korektu pierasiju pret nasa serveri
-  dt = datetime.now()
-  request_date = str(dt.year) + "-" + str(dt.month).zfill(2) + "-" + str(dt.day).zfill(2)  
-  logger.debug("Generated today's date: " + str(request_date))
+	dt = datetime.now()
+	request_date = str(dt.year) + "-" + str(dt.month).zfill(2) + "-" + str(dt.day).zfill(2)  
+	logger.debug("Generated today's date: " + str(request_date))
 
 #sini bloka aprakstitis ka tiek veikts pats pieprasijums un  padod lidzi  parametrus ka piem atslega un datums
-  logger.debug("Request url: " + str(nasa_api_url + "rest/v1/feed?start_date=" + request_date + "&end_date=" + request_date + "&api_key=" + nasa_api_key))
-  r = requests.get(nasa_api_url + "rest/v1/feed?start_date=" + request_date + "&end_date=" + request_date + "&api_key=" + nasa_api_key)
+	  logger.debug("Request url: " + str(nasa_api_url + "rest/v1/feed?start_date=" + request_date + "&end_date=" + request_date + "&api_key=" + nasa_api_key))
+	  r = requests.get(nasa_api_url + "rest/v1/feed?start_date=" + request_date + "&end_date=" + request_date + "&api_key=" + nasa_api_key)
 
-  logger.debug("Response status code: " + str(r.status_code))
-  logger.debug("Response headers: " + str(r.headers))
-  logger.debug("Response content: " + str(r.text))
+	  logger.debug("Response status code: " + str(r.status_code))
+	  logger.debug("Response headers: " + str(r.headers))
+	  logger.debug("Response content: " + str(r.text))
 #ja atgriez 200 kas ir veiksmiga  http pierpasjuma kods
-  if r.status_code == 200:
+	  if r.status_code == 200:
 #parsejam datus no json formatu uz diviem masiviem par drosajiem un bistamajiem asteroidiem
-    json_data = json.loads(r.text)
+   	 json_data = json.loads(r.text)
 
-    ast_safe = []
-    ast_hazardous = []
+   	 ast_safe = []
+  	  ast_hazardous = []
 #parbaude vai tads elemts eksiste  padotajos datus
-    if 'element_count' in json_data:
-      ast_count = int(json_data['element_count'])
-      logger.info("Asteroid count today: " + str(ast_count))
+   	 if 'element_count' in json_data:
+    	  ast_count = int(json_data['element_count'])
+     	 logger.info("Asteroid count today: " + str(ast_count))
 #ja ir vairak par nulli ejam talak un  nolasam datus no nasa iedotajiem datiem.( vards,url uz NASA lapu, MIN MAX izmeris, laiku kad pietuvosies
-      if ast_count > 0:
-        for val in json_data['near_earth_objects'][request_date]:
-          if 'name' and 'nasa_jpl_url' and 'estimated_diameter' and 'is_potentially_hazardous_asteroid' and 'close_approach_data' in val:
-            tmp_ast_name = val['name']
-            tmp_ast_nasa_jpl_url = val['nasa_jpl_url']
-            if 'kilometers' in val['estimated_diameter']:
-              if 'estimated_diameter_min' and 'estimated_diameter_max' in val['estimated_diameter']['kilometers']:
-                tmp_ast_diam_min = round(val['estimated_diameter']['kilometers']['estimated_diameter_min'], 3)
-                tmp_ast_diam_max = round(val['estimated_diameter']['kilometers']['estimated_diameter_max'], 3)
+    	  if ast_count > 0:
+       	 for val in json_data['near_earth_objects'][request_date]:
+        	  if 'name' and 'nasa_jpl_url' and 'estimated_diameter' and 'is_potentially_hazardous_asteroid' and 'close_approach_data' in val:
+        	    tmp_ast_name = val['name']
+        	    tmp_ast_nasa_jpl_url = val['nasa_jpl_url']
+        	    if 'kilometers' in val['estimated_diameter']:
+             	 if 'estimated_diameter_min' and 'estimated_diameter_max' in val['estimated_diameter']['kilometers']:
+              	  tmp_ast_diam_min = round(val['estimated_diameter']['kilometers']['estimated_diameter_min'], 3)
+            	    tmp_ast_diam_max = round(val['estimated_diameter']['kilometers']['estimated_diameter_max'], 3)
               else:
                 tmp_ast_diam_min = -2
                 tmp_ast_diam_max = -2
