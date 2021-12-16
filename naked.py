@@ -31,16 +31,20 @@ logger = logging.getLogger('root')
 logger.info('Loading configuration from file')
 #sis bloks griezas pie areja config faila un nolasa vertibas no tā
 try:
-                config = ConfigParser()
-                config.read('config.ini')
+		config = ConfigParser()
+		config.read('config.ini')
 
-                nasa_api_key = config.get('nasa', 'api_key')
-                nasa_api_url = config.get('nasa', 'api_url')
+		nasa_api_key = config.get('nasa', 'api_key')
+		nasa_api_url = config.get('nasa', 'api_url')
 
+		mysql_config_mysql_host = config.get('mysql_config', 'mysql_host')
+		mysql_config_mysql_db = config.get('mysql_config', 'mysql_db')
+		mysql_config_mysql_user = config.get('mysql_config', 'mysql_user')
+		mysql_config_mysql_pass = config.get('mysql_config', 'mysql_pass')
 
 except:
-                logger.exception('')
-logger.info('DONE')
+	logger.exception('')
+	logger.info('DONE')
 #
 def init_db():
 	global connection
@@ -94,9 +98,14 @@ def push_asteroids_arrays_to_db(request_day, ast_array, hazardous):
 
 if __name__ == "__main__":            
 
-    # Getting todays date
+	connection = None
+	connected = False
+
+	init_db()
+   
+ # Getting todays date
     #Dabūjam sodienas datumu lai varetu iaveidot korektu pierasiju pret nasa serveri
-    dt = datetime.now()
+	dt = datetime.now()
     request_date = str(dt.year) + "-" + str(dt.month).zfill(2) + "-" + str(dt.day).zfill(2)  
     logger.debug("Generated today's date: " + str(request_date))
 
