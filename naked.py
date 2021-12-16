@@ -105,19 +105,19 @@ if __name__ == "__main__":
    
  # Getting todays date
     #Dabūjam sodienas datumu lai varetu iaveidot korektu pierasiju pret nasa serveri
-	dt = datetime.now()
-    request_date = str(dt.year) + "-" + str(dt.month).zfill(2) + "-" + str(dt.day).zfill(2)  
-    logger.debug("Generated today's date: " + str(request_date))
+dt = datetime.now()
+request_date = str(dt.year) + "-" + str(dt.month).zfill(2) + "-" + str(dt.day).zfill(2)  
+logger.debug("Generated today's date: " + str(request_date))
 
     #sini bloka aprakstitis ka tiek veikts pats pieprasijums un  padod lidzi  parametrus ka piem atslega un datums
-    logger.debug("Request url: " + str(nasa_api_url + "rest/v1/feed?start_date=" + request_date + "&end_date=" + request_date + "&api_key=" + nasa_api_key))
-    r = requests.get(nasa_api_url + "rest/v1/feed?start_date=" + request_date + "&end_date=" + request_date + "&api_key=" + nasa_api_key)
+logger.debug("Request url: " + str(nasa_api_url + "rest/v1/feed?start_date=" + request_date + "&end_date=" + request_date + "&api_key=" + nasa_api_key))
+r = requests.get(nasa_api_url + "rest/v1/feed?start_date=" + request_date + "&end_date=" + request_date + "&api_key=" + nasa_api_key)
 
-    logger.debug("Response status code: " + str(r.status_code))
-    logger.debug("Response headers: " + str(r.headers))
-    logger.debug("Response content: " + str(r.text))
+logger.debug("Response status code: " + str(r.status_code))
+logger.debug("Response headers: " + str(r.headers))
+logger.debug("Response content: " + str(r.text))
     #ja atgriez 200 kas ir veiksmiga  http pierpasjuma kods
-    if r.status_code == 200:
+if r.status_code == 200:
     #parsejam datus no json formatu uz diviem masiviem par drosajiem un bistamajiem asteroidiem
         json_data = json.loads(r.text)
 
@@ -202,5 +202,5 @@ if __name__ == "__main__":
         else:
             logger.info("No asteroids close passing earth today")
     #ja ir kada kluda nolasot no API izdot kludas pazinojumu
-    else:
+else:
         logger.error("Unable to get response from API. Response code: " + str(r.status_code) + " | content: " + str(r.text))
