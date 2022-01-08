@@ -222,3 +222,6 @@ if r.status_code == 200:
 
 else:
     logger.error("Unable to get response from API. Response code: " + str(r.status_code) + " | content: " + str(r.text))
+
+
+    #test
