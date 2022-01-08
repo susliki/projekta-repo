@@ -22,7 +22,7 @@ logging.config.dictConfig(log_config)
         # Creating logger
 logger = logging.getLogger('root')
 
-
+#addoons 08.01.2022
 ('Asteroid processing service')
 
 
